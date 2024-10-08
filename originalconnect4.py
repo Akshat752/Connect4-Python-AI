@@ -28,6 +28,7 @@ def get_next_open_row(board, col):
 
 def print_board(board):
 	print(np.flip(board, 0))
+	# print("hi")
 
 def winning_move(board, piece):
 	# Check horizontal locations for win
@@ -120,8 +121,10 @@ while not game_over:
 
 					if winning_move(board, 1):
 						label = myfont.render("Player 1 wins!!", 1, RED)
+						
 						screen.blit(label, (40,10))
 						game_over = True
+						print("Player 1 wins!")
 
 
 			# # Ask for Player 2 Input
@@ -136,10 +139,11 @@ while not game_over:
 					if winning_move(board, 2):
 						label = myfont.render("Player 2 wins!!", 1, YELLOW)
 						screen.blit(label, (40,10))
+						print("Player 2 wins!")
 						game_over = True
 
 			print_board(board)
-			draw_board(board)
+			#draw_board(board)
 
 			turn += 1
 			turn = turn % 2

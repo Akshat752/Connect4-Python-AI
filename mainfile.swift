@@ -1,3 +1,4 @@
+
 import Foundation
 
 let ROW_COUNT = 6
@@ -218,11 +219,56 @@ func minimax(board: [[Int]], depth: Int, alpha: Int, beta: Int, maximizingPlayer
 var board = createBoard()
 var gameOver = false
 var turn = 0
-print("board made")
+print("Board created")
 printBoard(board: board)
-dropPiece(board: &board, row: 0, col: 0, piece: PLAYER_PIECE)
-dropPiece(board: &board, row: 0, col: 1, piece: PLAYER_PIECE)
-dropPiece(board: &board, row: 0, col: 2, piece: PLAYER_PIECE)
-dropPiece(board: &board, row: 0, col: 3, piece: PLAYER_PIECE)
-printBoard(board: board)
-
+while true {
+    printBoard(board: board)
+    
+    // Player's turn
+    print("Enter the column (0-\(COLUMN_COUNT - 1)) where you want to drop your piece:")
+    if let input = readLine(), let playerCol = Int(input), playerCol >= 0, playerCol < COLUMN_COUNT {
+        if let playerRow = getNextOpenRow(board: board, col: playerCol) {
+            dropPiece(board: &board, row: playerRow, col: playerCol, piece: PLAYER_PIECE)
+            print("Player dropped piece in column \(playerCol)")
+            printBoard(board: board)
+            
+            // Check for player win
+            if winningMove(board: board, piece: PLAYER_PIECE) {
+                print("Player wins!")
+                break
+            }
+        } else {
+            print("Column \(playerCol) is full. Try a different column.")
+            continue
+        }
+    } else {
+        print("Invalid input. Please enter a number between 0 and \(COLUMN_COUNT - 1).")
+        continue
+    }
+    
+    // AI's turn
+    print("AI is making a move...")
+    let minimaxResult = minimax(board: board, depth: 4, alpha: Int.min, beta: Int.max, maximizingPlayer: true)
+    
+    // Check if the result is valid
+    if let aiCol = minimaxResult.0, let aiRow = getNextOpenRow(board: board, col: aiCol) {
+        dropPiece(board: &board, row: aiRow, col: aiCol, piece: AI_PIECE)
+        print("AI dropped piece in column \(aiCol)")
+        printBoard(board: board)
+        
+        // Check for AI win
+        if winningMove(board: board, piece: AI_PIECE) {
+            print("AI wins!")
+            break
+        }
+        
+        // Check for draw
+        if getValidLocations(board: board).isEmpty {
+            print("The game is a draw!")
+            break
+        }
+    } else {
+        print("No valid moves for AI.")
+        break
+    }
+}
